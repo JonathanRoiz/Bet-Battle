@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+  <title>Case Clicker</title>
+  <head>
+    <!--
+      <link rel="stylesheet" href="https://rawcdn.githack.com/JonathanRoiz/Data/46a959e2c1c6d5f33d6199072d5089e11aa92649/CaseStyle.css">
+    -->
+    <style>
+      .case {
+        width: 100%;
+        position: relative;
+        background-color: blue;
+        border-radius: 15px;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      #cases {
+        display: none;
+      }
+      .buybuttons {
+        background-color: green;
+        border-radius: 10px;
+        border: none;
+        width: 5%;
+        height: 7vh;
+        font-size: 2vw;
+        margin-bottom: 10px;
+        outline: none;
+      }
+      *{
+        padding:0;margin:0
+       }
+      .navigator{
+        margin-left: 1%;
+        margin-top: .25%;
+        overflow:hidden;
+        background-color:blue;
+        border-radius:15px;
+        position:relative;
+        text-align:center;
+        width:98%
+      }
+      .navigator button{
+        margin-left: 5px;
+        margin-top: 5px;
+        outline: none;
+        background-color: green;
+        border: none;
+        border-radius: 10px;
+        float:left;
+        display:block;
+        color:#f2f2f2;
+        text-align:center;
+        padding:14px 16px;
+        text-decoration:none;
+        -webkit-touch-callout:none;
+        -webkit-user-select:none;
+        -khtml-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+      #inventory {
+        margin-top: 10px;
+        background-color: lightblue;
+        width: 100%;
+        border-radius: 15px;
+        height: 70vh;
+        overflow-y: auto;
+      }
+      ::-webkit-scrollbar {
+        width: 0px;
+      }
+      .item {
+        background-color: lightgreen;
+        border-radius: 20px;
+        margin-left: 1%;
+        margin-top: 1%;
+        width: 8vw;
+        height: 8vw;
+        float:left;
+      }
+      .itemName {
+        font-size: 1.5vw;
+        text-align: center;
+      }
+      .itemAmount {
+        font-size: 1vw;
+        text-align: right;
+        margin-right: .8vw;
+      }
+    </style>
+    <font size="+2">
+    <div class='navigator'>
+      <button onclick='openCases()'>Cases</button>
+      <button onclick='openInventory()'>Inventory</button>
+      <h1 id='moneyDisplay'>Case-Bux</h1>
+    </div>
+    <div id='cases'>
+      <div class='case' id='common'>
+        <h1>Common</h1>
+        <h2 class='price'>Price: $10</h2>
+        <button class='buybuttons' onclick='buyCommon()'>Buy</button>
+      </div>
+        <div class='case' id='uncommon'>
+        <h1>Uncommon</h1>
+        <h2 class='price'>Price: $100</h2>
+        <button class='buybuttons' onclick='buyUncommon()'>Buy</button>
+      </div>
+    </div>
+    <div id='inventory'>
+      <!--
+      <div class='item'>
+        <h1 class='itemName'>Boots</h1>
+        <h2 class='itemAmount'>x10</h2>
+      </div>
+      -->
+    </div>
+    </font>
+  </head>
+  <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let playersMoney = 1000;
+      let playersInventory = [];
+      let commonItems = ['Shirt','Pants','Hat','Shoes'];
+      let uncommonItems = ['Armor','Sword','Shield'];
+      let socket = io();
+      let moneyDisplay = document.getElementById("moneyDisplay");
+      let cases = document.getElementById("cases");
+      let inventory = document.getElementById("inventory");
+      document.getElementById("common").style.backgroundColor = "lightgrey";
+      document.getElementById("uncommon").style.backgroundColor = "lightgreen";
+      moneyDisplay.innerHTML = 'Case-Bux: '+playersMoney;
+      for (i = 0; i < 2; i++) {
+        document.getElementsByClassName("price")[i].style.color = "#ff00ff";
+      }
+      socket.emit('initiate');
+      function buyCommon() {
+        if (playersMoney >= 10) {
+          let div = document.createElement("div");
+          let item;
+          if (Math.random() < .8) {
+            div.setAttribute("style", "background-color: lightgrey;");
+            item = commonItems[Math.floor(Math.random()*commonItems.length)];
+          } else {
+            div.setAttribute("style", "background-color: lightgreen;");
+            item = uncommonItems[Math.floor(Math.random()*uncommonItems.length)];
+          }
+          let itemOwned = false;
+          for (i = 0; i < playersInventory.length; i++) {
+            if (playersInventory[i][0] == item) {
+              playersInventory[i][1] += 1;
+              itemOwned = true;
+            }
+          }
+          if (itemOwned == false) {
+            let text = document.createElement("h1");
+            var amountDisplay = document.createElement("h2");
+            playersInventory.push([item,1,amountDisplay]);
+            text.innerHTML = item;
+            div.setAttribute("class", "item");
+            text.setAttribute("class", "itemName");
+            amountDisplay.setAttribute("class", "itemAmount");
+            div.appendChild(text);
+            div.appendChild(amountDisplay);
+            inventory.appendChild(div);
+          }
+          for (i = 0; i < playersInventory.length; i++) {
+            if (playersInventory[i][0] == item) {
+              playersInventory[i][2].innerHTML = "x"+playersInventory[i][1];
+            }
+          }
+          playersMoney -= 10;
+          moneyDisplay.innerHTML = 'Case-Bux: '+playersMoney;
+        }
+      }
+
+      function openCases() {
+        cases.style.display = "block";
+        inventory.style.display = "none";
+      }
+      function openInventory() {
+        inventory.style.display = "block";
+        cases.style.display = "none";
+      }
+    </script>
+  </body>
+</html>
