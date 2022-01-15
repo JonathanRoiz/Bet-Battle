@@ -1,0 +1,279 @@
+.case {
+    width: 100%;
+    position: relative;
+    background-color: blue;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#cases {
+    display: none;
+}
+.buybuttons {
+    background-color: green;
+    border-radius: 10px;
+    border: none;
+    width: 8%;
+    margin-top: 1.3vh;
+    height: 7vh;
+    font-size: 2vw;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-bottom: 10px;
+    outline: none;
+}
+* {
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.navigator {
+    margin-left: 1%;
+    margin-top: 0.25%;
+    overflow: hidden;
+    background-color: blue;
+    border-radius: 15px;
+    position: relative;
+    text-align: center;
+    width: 98%;
+}
+.navigator button {
+    margin-left: 5px;
+    margin-top: 5px;
+    outline: none;
+    background-color: green;
+    border: none;
+    border-radius: 10px;
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+}
+#inventory {
+    margin-top: 6px;
+    background-color: grey;
+    width: 100%;
+    border-radius: 15px;
+    height: 70vh;
+    overflow-y: auto;
+}
+#marketplace {
+    margin-top: 6px;
+    background-color: grey;
+    width: 100%;
+    border-radius: 15px;
+    height: 70vh;
+    overflow-y: auto;
+}
+::-webkit-scrollbar {
+    width: 0px;
+}
+.sell {
+    position: relative;
+    width: 85%;
+    margin-left: 7.5%;
+    text-align: center;
+    margin-top: 15%;
+    font-size: 1.7vw;
+    background-color: lightgreen;
+    border-radius: 20px;
+}
+.item {
+    position: relative;
+    background-color: lightgreen;
+    border-radius: 20px;
+    margin-top: 1%;
+    margin-left: 1%;
+    width: 8vw;
+    height: 8vw;
+    float: left;
+}
+.itemName {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    margin-top: 5%;
+    font-size: 1.5vw;
+    
+}
+.itemAmount {
+    position: absolute;
+    margin-top: 20%;
+    margin-left: 5%;
+    font-size: 1vw;
+    text-align: left;
+}
+.openImage {
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+.itemImage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.itemValue {
+    position: absolute;
+    width: 100%;
+    margin-top: 80%;
+    font-size: 1.5vw;
+    text-align: center;
+}
+.xButton {
+    font-size: 2vw;
+    position: absolute;
+    right: 2vw;
+    top: 2vh;
+    width: 3vw;
+    height: 3vw;
+    background-color: red;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 10px;
+    outline: none;
+    border: none;
+}
+#opened {
+    display: none;
+    position: absolute;
+    top: 10vh;
+    z-index: 2;
+    font-size: 2.5vw;
+    text-align: center;
+    background-color: pink;
+    border-radius: 15px;
+    height: 70vh;
+    width: 60%;
+    margin-left: 20%;
+    margin-top: 5vh;
+}
+.buyAnother {
+    background-color: green;
+    border-radius: 10px;
+    border: none;
+    width: 30%;
+    height: 13vh;
+    font-size: 3vw;
+    margin-top: 35vh;
+    outline: none;
+}
+#clickButton {
+    margin-left: 45vw;
+    margin-top: 5vh;
+    font-size: 3vw;
+    width: 10vw;
+    outline: none;
+    background-color: green;
+    border: none;
+    border-radius: 10px;
+    text-align: center;
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    padding: 14px 16px;
+}
+#clicker {
+    display: none;
+}
+#CoinFlip {
+    display: none;
+    background-color: lightblue;
+    border-radius: 15px;
+    width: 90%;
+    margin-left: 5vw;
+    margin-top: 6px;
+    text-align: center;
+}
+input {
+    border-radius: 15px;
+    outline: none;
+    padding-left: 0.7%;
+    text-align: center;
+    font-size: 2vw;
+    width: 45%;
+    height: 5vh;
+}
+#game {
+    display: none;
+}
+.warning {
+    display: none;
+    font-size: 15px;
+    color: red;
+}
+
+.button {
+    margin-top: 5px;
+}
+
+#casebux {
+    display: none;
+}
+#login {
+    display: none;
+}
+#register {
+    display: none;
+}
+canvas {
+  background-color: rgba(158, 167, 184);
+  width: 100%;
+}
+#divId {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 50%;
+  transform: translate(-50%,-50%);
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-align: center;
+}
+
+#divId .elements {
+  background-color: green;
+  border-radius: 10px;
+  width: 40%;
+  height: 8vh;
+  font-size: 3vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#lobbyList {
+  background-color: pink;
+  width: 100%;
+  overflow: scroll;
+  height: 50vh;
+  border-radius: 15px;
+}
+
+.lobby {
+  background-color: lightgreen;
+  border-radius: 15px;
+  width: 70%;
+  text-align: center;
+  margin-bottom: .75vh;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#divId #lobby p {
+  display: none;
+}
