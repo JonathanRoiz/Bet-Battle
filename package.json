@@ -18,8 +18,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
-   "engines": {
+  "license": "ISC",
+  "engines": {
     "node": "12.22.6"
-   }
+  }
 }
