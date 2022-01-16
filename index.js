@@ -2,6 +2,7 @@
 // Line 323
 // Potentially might not do this
 // Make animation or something for winner
+let cubeNumPlayers = 5;
 
 const Database = require("@replit/database");
 const db = new Database();
@@ -339,7 +340,7 @@ io.on('connection', function(socket) {
     } else {
       socket.emit('alert',"You're account has already joined");
     }
-    if (queue.length >= 2) {
+    if (queue.length >= cubeNumPlayers) {
       for (let i = 0; i < queue.length; i++) {
         players.push(queue[i]);
       }
