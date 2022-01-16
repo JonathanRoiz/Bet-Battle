@@ -2,7 +2,7 @@
 // Line 323
 // Potentially might not do this
 // Make animation or something for winner
-let cubeNumPlayers = 5;
+let cubeNumPlayers = 4;
 
 const Database = require("@replit/database");
 const db = new Database();
