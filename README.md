@@ -1,1 +1,2 @@
 # Case-Clicker
+betbattle.ga
