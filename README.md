@@ -1,4 +1,4 @@
 # Case-Clicker
-betbattle.ga
+http://betbattle.ga/
 
 https://betbattle.herokuapp.com/
