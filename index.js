@@ -511,6 +511,6 @@ setInterval(function() {
   io.emit('updatepos',players,points,walls,queue.length,queue,cubeNumPlayers); // queue is a test
 },7);
 
-http.listen(3001, () => {
+http.listen($PORT || 3001, () => {
   console.log('listening on *:3001');
 });
