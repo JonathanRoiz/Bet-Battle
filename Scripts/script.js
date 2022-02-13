@@ -259,6 +259,7 @@ socket.on("deleteSession", function () {
 });
 
 function flipCoin(guess) {
+  print(user.caseBux);
   if (parseInt(amountBet.value) > 0) {
     socket.emit("flipCoin", guess, user, amountBet.value);
   }
@@ -370,56 +371,7 @@ function openCubeEatCube() {
   }
 }
 
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
+// Start Minigame code \\
 
 // work on the scale of the players names next
 let ctx = canvas.getContext("2d");
@@ -430,13 +382,20 @@ let waiting = document.getElementById("waiting");
 let playButton = document.getElementById("playButton");
 let playersInQueue = document.getElementById("playersInQueue");
 let cubeTitle = document.getElementById("cubeTitle");
+let timer = document.getElementById("timer");
+let cubeAmountBet = document.getElementById("cubeAmountBet");
+
+socket.on("tick", (time) => {
+  timer.innerHTML = "Starting in: " + time;
+});
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 function play() {
-  socket.emit('initiate', user.username);
-  waiting.style.display = 'block';
+  if (parseInt(cubeAmountBet.value) > 0) {
+    socket.emit('initiate', user.username, cubeAmountBet.value);
+  }
   //div.style.display = 'none';
 }
 document.addEventListener("keydown", keyDownHandler, false);
@@ -480,6 +439,7 @@ let plrId;
 
 socket.on('setId', function(id) {
   plrId = id;
+  timer.style.display = 'block';
 });
 
 socket.on('died', function(player) {
@@ -496,30 +456,37 @@ socket.on('died', function(player) {
     cubeTitle.style.display = 'block';
     playersInQueue.style.display = 'block';
     playButton.style.display = 'block';
+    timer.style.display = 'none';
+    cubeAmountBet.style.display = 'block';
   }
 });
 m = 0
 let colors = ['black', 'blue', 'grey', 'red', 'pink'];
 let color = colors[Math.floor(Math.random() * colors.length)]
 let scale = 1;
-socket.on('updatepos', function(players, points, walls, numQueue,queue) {
+
+// When it gets the player, the amountBet throws it off
+socket.on('updatepos', function(players, points, walls, numQueue,queue,numPlr) {
   // Test
   for (let i = 0; i < queue.length; i++) {
     if (queue[i].id == plrId) {
       playButton.style.display = 'none';
+      waiting.style.display = 'block';
     }
   }
   for (let i = 0; i < players.length; i++) {
     if (plrId == players[i].id) {
       // Player is in round
+      timer.style.display = 'none';
       playersInQueue.style.display = 'none';
       cubeTitle.style.display = 'none';
       waiting.style.display = 'none';
       playButton.style.display = 'none';
+      cubeAmountBet.style.display = 'none';
     }
   }
   // End Test
-  playersInQueue.innerHTML = numQueue + '/2';
+  playersInQueue.innerHTML = numQueue + '/' + numPlr;
   name = user.username;
   if (name !== "null") {
     ctx.save();
