@@ -236,7 +236,7 @@ canvas {
   position: absolute;
   left: 50%;
   top: 45%;
-  width: 50%;
+  width: 65%;
   transform: translate(-50%,-50%);
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
@@ -267,7 +267,7 @@ canvas {
 .lobby {
   background-color: lightgreen;
   border-radius: 15px;
-  width: 70%;
+  width: 100%;
   text-align: center;
   margin-bottom: .75vh;
   margin-left: auto;
@@ -276,4 +276,15 @@ canvas {
 
 #divId #lobby p {
   display: none;
+}
+
+#timer {
+  display: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#cubeAmountBet {
+  margin-left: auto;
+  margin-right: auto;
 }
