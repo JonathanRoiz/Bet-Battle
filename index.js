@@ -1,8 +1,9 @@
-// Have different plays be in different rooms using socket.join("Room Name"), and io.to("Room Name").emit("some event");
+// Have different players be in different rooms using socket.join("Room Name"), and io.to("Room Name").emit("some event");
 // Line 323
 // Potentially might not do this
 // Make animation or something for winner
-let cubeNumPlayers = 4;
+
+let cubeNumPlayers = 2;
 
 const Database = require("@replit/database");
 const db = new Database();
@@ -33,14 +34,24 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+function getKeyCode(char) {
+  var keyCode = char.charCodeAt(0);
+  if(keyCode > 90) {  // 90 is keyCode for 'z'
+    return keyCode - 32;
+  }
+  return keyCode;
+}
+
 function sortItems() {
   for (const username in users) {
-  var inventory = users[username].inventory;
-    inventory.sort(function(a, b) {
-      return a[1] - b[1]
-    });
-    inventory.reverse();
-  }
+    var inventory = users[username].inventory;
+      inventory.sort(function(a, b) {
+        let aKeyCode = getKeyCode(a[0].charAt(0));
+        let bKeyCode = getKeyCode(b[0].charAt(0));
+        return (a[1] - b[1]) + (a[4]/1000) - (b[4]/1000) + (aKeyCode/100000) - (bKeyCode/100000)
+      });
+      inventory.reverse();
+    }
 }
 
 db.get("Players").then(value => {
@@ -100,8 +111,14 @@ io.on('connection', function(socket) {
         }
       }
     }
-    
   });
+
+  // Untested code
+  // Function not called
+  socket.on('buy', (item, plr) => {
+
+  });
+  // Finish untested code
 
   socket.on('register', (username, password) => {
     if (!users[username.toLowerCase()]) {
@@ -162,7 +179,7 @@ io.on('connection', function(socket) {
   socket.on("buyCommon", (user) => {
     user = users[user.username.toLowerCase()];
 
-    let commonItems = [['Shirt',10,'common','Sword.png'],['Pants',8,'common','Sword.png'],['Hat',7,'common','Sword.png'],['Shoes',6,'common','Sword.png']];
+    let commonItems = [['Red',10,'common','Red.png'],['Pants',8,'common','Sword.png'],['Hat',10,'common','Sword.png'],['Shoes',6,'common','Sword.png']];
     let uncommonItems = [['Armor',20,'uncommon','Sword.png'],['Sword',25,'uncommon','Sword.png'],['Shield',16,'uncommon','Sword.png']];
     let rareItems = [['Magic Wand',45,'rare','Sword.png'],['Magic Armor',36,'rare','Sword.png'],['Magic Shield',42,'rare','Sword.png']];
     let epicItems = [['Bazooka',368,'epic','Bazooka.png'],['Atomic Armor',318,'epic','Sword.png'],['Atomic Shield',280,'epic','Sword.png']];
@@ -235,36 +252,18 @@ setInterval(function() {
   io.emit("updateLoop", users, market);
 },20);
 
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
-// Test Code \\
+// Start of Minigame code \\
 
 var path = require('path');
 
-function CubePlayer(id,x,y,name,color,size) {
+function CubePlayer(id,x,y,name,cubeAmountBet,color,size) {
   this.id = id;
   this.x = x;
   this.y = y;
   this.name = name;
   this.color = color;
   this.size = size;
+  this.cubeAmountBet = cubeAmountBet;
 }
 
 
@@ -281,6 +280,8 @@ function Wall(x,y,width,height,name) {
   this.height = height;
   this.name = name;
 }
+
+let initialPlayers = 0;
 
 let queue = [];
 
@@ -323,17 +324,22 @@ for (var i = 0; i < 200; i++) {
   points[i] = new Point(Math.floor((Math.random()*3950)-1975),Math.floor((Math.random()*3950)-1975),25);
 }
 
+let starting = false; // Test
+
 io.on('connection', function(socket) {
-  socket.on('initiate', (username) => {
+  socket.on('initiate', (username, cubeAmountBet) => {
     console.log(socket.id);
     socket.emit('setId',socket.id);
     function joined(element, index, array) {
-      console.log(element.name != username);
       return element.name == username;
     }
     if (!queue.find(joined)) {
       if (players.length == 0) {
-        queue.push(new CubePlayer(socket.id,0,0,username));
+        if (cubeAmountBet <= users[username].caseBux) {
+          queue.push(new CubePlayer(socket.id,0,0,username,cubeAmountBet));
+        } else {
+          socket.emit('alert', "You can't bet more money than you have!");
+        }
       } else {
         socket.emit('alert', 'Please wait for the previous round to finish');
       }
@@ -341,10 +347,31 @@ io.on('connection', function(socket) {
       socket.emit('alert',"You're account has already joined");
     }
     if (queue.length >= cubeNumPlayers) {
-      for (let i = 0; i < queue.length; i++) {
-        players.push(queue[i]);
+      if (!starting) {
+        starting = true;
+        let time = 5;
+        let timer = setInterval(tick, 1000);
+        function tick() {
+          io.emit('tick', time);
+          time -= 1;
+          if (time == -1) {
+            stop();
+          }
+        }
+        function stop() {
+          clearInterval(timer);
+          initialPlayers = queue.length;
+          for (let i = 0; i < queue.length; i++) {
+            players.push(queue[i]);
+            let user = users[queue[i].name];
+            console.log(user.caseBux);
+            user.caseBux -= queue[i].cubeAmountBet;
+            console.log(user.caseBux);
+          }
+          queue = [];
+          starting = false;
+        }
       }
-      queue = [];
     }
   });
 
@@ -353,7 +380,8 @@ io.on('connection', function(socket) {
     if (players.length == 1) {
       io.emit("died",players[0]);
       console.log(players[0].name + ' has won!');
-      users[players[0].name].caseBux += 100;
+      let user = users[players[0].name];
+      user.caseBux += (players[0].cubeAmountBet * initialPlayers);
       players.splice(0,1);
     }
     for (var i = 0; i < players.length; i++) {
@@ -370,7 +398,7 @@ io.on('connection', function(socket) {
           } else if (players[v].size > players[i].size) {
             players[v].size += (players[i].size/2);
             players[v].x -= players[i].size/2;
-            players[v].y -= players[i].size/2
+            players[v].y -= players[i].size/2;
             io.emit("died",players[i]);
             players.splice(i,1);
             break;
@@ -432,9 +460,9 @@ io.on('connection', function(socket) {
             players[i].x += movespeed;
           }
           if (players[i].size) {
-            players[i] = new CubePlayer(id,players[i].x,players[i].y,name,color,players[i].size);
+            players[i] = new CubePlayer(id,players[i].x,players[i].y,name,players[i].cubeAmountBet,color,players[i].size);
           } else {
-            players[i] = new CubePlayer(id,(Math.random() * 3500)-1750,(Math.random() * 3500)-1750,name,color,40);
+            players[i] = new CubePlayer(id,(Math.random() * 3500)-1750,(Math.random() * 3500)-1750,name,players[i].cubeAmountBet,color,40);
           }
         }
       }
@@ -447,14 +475,24 @@ io.on('connection', function(socket) {
         console.log("cubeeatcube session deleted");
       }
     }
-    /* ONLY DELETE IF THEY ARE GONE FOR OVER 30 SECONDS
-    for (let i = 0; i < sessions.length; i++) {
-      if (socket.id == sessions[i].sessionId) {
-        sessions.splice(i,1);
-        console.log("session deleted");
+    /* ONLY DELETE IF THEY ARE GONE FOR OVER 15 SECONDS */
+    // Doesn't work, just counts to 15, then deletes session
+    let timeUp = false;
+    let timePassed = 0;
+    setInterval(function() {
+      for (let i = 0; i < sessions.length; i++) {
+        if (socket.id == sessions[i].sessionId) {
+          timePassed += 1;
+          console.log(timePassed);
+          if (timePassed == 15) {
+            users[sessions[i].username].sessionId = "";
+            sessions.splice(i,1);
+            console.log("session deleted");
+          }
+        }
       }
-    }
-    */
+    }, 1000);
+    /* */
     for (var i = 0; i < players.length; i++) {
       if (players[i]) {
       if (socket.id == players[i].id) {
@@ -470,9 +508,9 @@ setInterval(function() {
   players.sort( function( a , b) {
     return a.size - b.size
   });
-  io.emit('updatepos',players,points,walls,queue.length,queue); // queue is a test
+  io.emit('updatepos',players,points,walls,queue.length,queue,cubeNumPlayers); // queue is a test
 },7);
 
-http.listen(process.env.PORT || 5000, () => {
-  console.log('listening on *:' + process.env.PORT || 5000);
+http.listen(3001, () => {
+  console.log('listening on *:3001');
 });
